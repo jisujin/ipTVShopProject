@@ -42,7 +42,7 @@ public class ManagementCenter {
 
         ipTVShopProject.external.Installation installation = new ipTVShopProject.external.Installation();
         // mappings goes here
-        Application.applicationContext.getBean(ipTVShopProject.external.InstallationService.class)
+        ManagementCenterApplication.applicationContext.getBean(ipTVShopProject.external.InstallationService.class)
             .installationCancellation(installation);
 
 

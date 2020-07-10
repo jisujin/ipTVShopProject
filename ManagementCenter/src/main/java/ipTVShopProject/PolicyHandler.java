@@ -10,7 +10,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyHandler{
-    
+    @StreamListener(KafkaProcessor.INPUT)
+    public void onStringEventListener(@Payload String eventString){
+
+    }
+
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverJoinOrdered_OrderRequest(@Payload JoinOrdered joinOrdered){
 
