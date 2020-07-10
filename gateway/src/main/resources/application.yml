@@ -20,6 +20,10 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path=/installations/** 
+        - id: orderstatus
+          uri: http://localhost:8084
+          predicates:
+            - Path=/orderstatuses/** 
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -51,6 +55,10 @@ spring:
           uri: http://Installation:8080
           predicates:
             - Path=/installations/** 
+        - id: orderstatus
+          uri: http://orderstatus:8080
+          predicates:
+            - Path=/orderstatuses/** 
       globalcors:
         corsConfigurations:
           '[/**]':
