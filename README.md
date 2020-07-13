@@ -1,4 +1,4 @@
-# ipTVShopProject (인터넷 설치 가입신청 서비스)
+﻿# ipTVShopProject (인터넷 설치 가입신청 서비스)
 
 4조 인터넷&인터넷TV 가입신청 서비스 CNA개발 실습을 위한 프로젝트 입니다.
 
@@ -38,7 +38,7 @@
 
 비기능적 요구사항
 1. 트랜잭션
-    1. 조건
+    1. 가입취소 신청은 설치상태를 확인 후 처리한다.(미설치상태일 때만 취소처리됨)
 1. 장애격리
     1. 인터넷 가입신청과 취소는 고객서비스 담당자의 접수, 설치 처리와 관계없이 항상 처리 가능하다.
 
@@ -78,55 +78,66 @@
 
 
 ## AS-IS 조직 (Horizontally-Aligned)
-  
+  ![image](https://user-images.githubusercontent.com/56263370/87296744-32433480-c542-11ea-9683-6b792f12cf55.png)  
 
 ## TO-BE 조직 (Vertically-Aligned)
-  
+  ![image](https://user-images.githubusercontent.com/56263370/87296805-4d15a900-c542-11ea-8fc2-15640ee62906.png)
 
 
 ## Event Storming 결과
 * MSAEz 로 모델링한 이벤트스토밍 결과:  
-
+  - http://msaez.io/#/storming/tumGnckjgrc4UVXq2EBT4EFYhnT2/mine/c03f2bb6625a2ed5bef6fcf78dde4b26/-MC01LpwJ3zz9a4MgvCj
 
 ### 이벤트 도출
+ ![image](https://user-images.githubusercontent.com/56263370/87294520-de831c00-c53e-11ea-9011-f8ef1bf80398.png)
 
 
 ### 부적격 이벤트 탈락
-
+  ![image](https://user-images.githubusercontent.com/56263370/87294672-08d4d980-c53f-11ea-9ee5-b572d8e5a6de.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
-        - 주문시>메뉴카테고리선택됨, 주문시>메뉴검색됨 :  UI 의 이벤트이지, 업무적인 의미의 이벤트가 아니라서 제외
+        - 중복/불필요 이벤트 제거
+
+### 폴리시 부착
+  ![image](https://user-images.githubusercontent.com/56263370/87294750-2609a800-c53f-11ea-841e-b373a52a2200.png)
+
 
 ### 액터, 커맨드 부착하여 읽기 좋게
+![image](https://user-images.githubusercontent.com/56263370/87294847-49ccee00-c53f-11ea-8b39-0f9af2ed9a8f.png)
 
 
 ### 어그리게잇으로 묶기
-
+![image](https://user-images.githubusercontent.com/56263370/87294942-6f59f780-c53f-11ea-8c69-af3f105bfdc1.png)
 
     - app의 
 
 ### 바운디드 컨텍스트로 묶기
-
+![image](https://user-images.githubusercontent.com/56263370/87295108-acbe8500-c53f-11ea-897d-553412df4123.png)
 
 
     - 도메인 서열 분리 
         
-### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
-
 
 
 ### 폴리시의 이동과 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
-
+![image](https://user-images.githubusercontent.com/56263370/87295156-bf38be80-c53f-11ea-85c5-378d2b12d81d.png)
 
 
 ### 완성된 1차 모형
-
+![image](https://user-images.githubusercontent.com/56263370/87294427-c0b5b700-c53e-11ea-932c-546d7244fbef.png)
 
 
     - View Model 추가
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
+#### 시나리오 Coverage Check (1)
+![image](https://user-images.githubusercontent.com/56263370/87295479-366e5280-c540-11ea-8c27-ec483a384b69.png)
 
+#### 시나리오 Coverage Check (2)
+![image](https://user-images.githubusercontent.com/56263370/87295543-5867d500-c540-11ea-9660-87e1c97591a2.png)
+
+#### 비기능 요구사항 coverage
+![image](https://user-images.githubusercontent.com/56263370/87295723-95cc6280-c540-11ea-8389-34c538f57e28.png)
 
 
 
@@ -135,16 +146,10 @@
 
 
 
-### 비기능 요구사항에 대한 검증
-
-
-    - 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
-
-
 
 
 ## 헥사고날 아키텍처 다이어그램 도출
-    
+    ![image](https://user-images.githubusercontent.com/56263370/87295821-bdbbc600-c540-11ea-955f-e4835fe69de4.png)
 
 
 # 구현:
