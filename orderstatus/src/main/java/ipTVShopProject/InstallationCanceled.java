@@ -1,15 +1,7 @@
 package ipTVShopProject;
 
-import javax.persistence.*;
-import org.springframework.beans.BeanUtils;
-import java.util.List;
+public class InstallationCanceled extends AbstractEvent {
 
-@Entity
-@Table(name="Installation_table")
-public class Installation {
-
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private Long engineerId;
     private String engineerName;
@@ -18,32 +10,9 @@ public class Installation {
     private Long orderId;
     private String status;
 
-    @PostPersist
-    public void onPostPersist(){
-        InstallationAccepted installationAccepted = new InstallationAccepted();
-        BeanUtils.copyProperties(this, installationAccepted);
-        installationAccepted.publishAfterCommit();
-
-
+    public InstallationCanceled(){
+        super();
     }
-
-    @PostUpdate
-    public void onPostUpdate(){
-        if(this.getStatus().equals("INSTALLCOMPLETED")) {
-            InstallationCompleted installationCompleted = new InstallationCompleted();
-            BeanUtils.copyProperties(this, installationCompleted);
-            installationCompleted.publishAfterCommit();
-        }
-
-        if(this.getStatus().equals("INSTALLATIONCANCELED")) {
-            InstallationCanceled installationCanceled = new InstallationCanceled();
-            BeanUtils.copyProperties(this, installationCanceled);
-            installationCanceled.publishAfterCommit();
-        }
-
-
-    }
-
 
     public Long getId() {
         return id;
@@ -94,8 +63,4 @@ public class Installation {
     public void setStatus(String status) {
         this.status = status;
     }
-
-
-
-
 }

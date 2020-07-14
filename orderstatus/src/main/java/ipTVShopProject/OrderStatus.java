@@ -91,5 +91,21 @@ public class OrderStatus {
         public void setStatus(String status) {
             this.status = status;
         }
+        
+        @Override
+        public String toString() {
+            return "OrderStatus{" +
+                    "id=" + id +
+                    ", orderId=" + orderId +
+                    ", productId=" + productId +
+                    ", productName='" + productName + '\'' +
+                    ", installationAddress='" + installationAddress + '\'' +
+                    ", customerId=" + customerId +
+                    ", orderDate='" + orderDate + '\'' +
+                    ", engineerName='" + engineerName + '\'' +
+                    ", installCompleteDate='" + installCompleteDate + '\'' +
+                    ", status='" + status + '\'' +
+                    '}';
+        }
 
 }

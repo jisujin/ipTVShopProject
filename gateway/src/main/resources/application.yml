@@ -19,7 +19,7 @@ spring:
         - id: Installation
           uri: http://localhost:8083
           predicates:
-            - Path=/installations/** 
+            - Path=/installations/**
         - id: orderstatus
           uri: http://localhost:8084
           predicates:

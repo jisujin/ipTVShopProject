@@ -230,13 +230,4 @@ public class OrderStatusViewHandler {
         }
     }
 
-    @StreamListener(KafkaProcessor.INPUT)
-    public void when_then_DELETE_(@Payload  ) {
-        try {
-            if (.isMe()) {
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }
