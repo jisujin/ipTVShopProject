@@ -252,20 +252,20 @@
 ## 폴리글랏 퍼시스턴스
 My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용
 
-pom.xml dependency 추가
-<dependency>
-	<groupId>mysql</groupId>
-	<artifactId>mysql-connector-java</artifactId>
-	<scope>runtime</scope>
-</dependency>
+	pom.xml dependency 추가
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<scope>runtime</scope>
+	</dependency>
 
 application.yml 파일 수정
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: 
+	datasource:
+	driver-class-name: com.mysql.cj.jdbc.Driver
+	url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
+	username: root
+	password: 
 
 
 ## 폴리글랏 프로그래밍
