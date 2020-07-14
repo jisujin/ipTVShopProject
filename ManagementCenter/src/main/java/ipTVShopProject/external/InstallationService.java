@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Date;
 
-@FeignClient(name="Installation", url="http://Installation:8080")
+@FeignClient(name="Installation", url="http://localhost:8083")  //url="http://Installation:8080")
 public interface InstallationService {
 
-    @RequestMapping(method= RequestMethod.PATCH, path="/installations")
-    public void installationCancellation(@RequestBody Installation installation);
+    @RequestMapping(method= RequestMethod.GET, path="/installations")
+    public String installationCancellation();
 
 }
