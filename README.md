@@ -155,17 +155,17 @@
 # 구현:
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8084 이다)
 
-cd Order
-mvn spring-boot:run
+	cd Order
+	mvn spring-boot:run
 
-cd ManagementCenter
-mvn spring-boot:run
+	cd ManagementCenter
+	mvn spring-boot:run
 
-cd Installation
-mvn spring-boot:run
+	cd Installation
+	mvn spring-boot:run
 
-cd orderstatus
-mvn spring-boot:run
+	cd orderstatus
+	mvn spring-boot:run
 
 
 ## DDD 의 적용
@@ -173,77 +173,77 @@ mvn spring-boot:run
 - 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: Order, ManagementCenter, Installation
 - Installation(설치) 마이크로서비스 예시
 
-package ipTVShopProject;
+	package ipTVShopProject;
 
-import javax.persistence.*;
-import org.springframework.beans.BeanUtils;
-import java.util.List;
+	import javax.persistence.*;
+	import org.springframework.beans.BeanUtils;
+	import java.util.List;
 
-@Entity
-@Table(name="Installation_table")
-public class Installation {
+	@Entity
+	@Table(name="Installation_table")
+	public class Installation {
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
-    private Long engineerId;
-    private String engineerName;
-    private String installReservationDate;
-    private String installCompleteDate;
-    private Long orderId;
-    private String status;
+		@Id
+		@GeneratedValue(strategy=GenerationType.AUTO)
+		private Long id;
+		private Long engineerId;
+		private String engineerName;
+		private String installReservationDate;
+		private String installCompleteDate;
+		private Long orderId;
+		private String status;
 
-    public Long getId() {
-        return id;
-    }
+		public Long getId() {
+			return id;
+		}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public Long getEngineerId() {
-        return engineerId;
-    }
+		public void setId(Long id) {
+			this.id = id;
+		}
+		public Long getEngineerId() {
+			return engineerId;
+		}
 
-    public void setEngineerId(Long engineerId) {
-        this.engineerId = engineerId;
-    }
-    public String getEngineerName() {
-        return engineerName;
-    }
+		public void setEngineerId(Long engineerId) {
+			this.engineerId = engineerId;
+		}
+		public String getEngineerName() {
+			return engineerName;
+		}
 
-    public void setEngineerName(String engineerName) {
-        this.engineerName = engineerName;
-    }
-    public String getInstallReservationDate() {
-        return installReservationDate;
-    }
+		public void setEngineerName(String engineerName) {
+			this.engineerName = engineerName;
+		}
+		public String getInstallReservationDate() {
+			return installReservationDate;
+		}
 
-    public void setInstallReservationDate(String installReservationDate) {
-        this.installReservationDate = installReservationDate;
-    }
-    public String getInstallCompleteDate() {
-        return installCompleteDate;
-    }
+		public void setInstallReservationDate(String installReservationDate) {
+			this.installReservationDate = installReservationDate;
+		}
+		public String getInstallCompleteDate() {
+			return installCompleteDate;
+		}
 
-    public void setInstallCompleteDate(String installCompleteDate) {
-        this.installCompleteDate = installCompleteDate;
-    }
-    public Long getOrderId() {
-        return orderId;
-    }
+		public void setInstallCompleteDate(String installCompleteDate) {
+			this.installCompleteDate = installCompleteDate;
+		}
+		public Long getOrderId() {
+			return orderId;
+		}
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-    public String getStatus() {
-        return status;
-    }
+		public void setOrderId(Long orderId) {
+			this.orderId = orderId;
+		}
+		public String getStatus() {
+			return status;
+		}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+		public void setStatus(String status) {
+			this.status = status;
+		}
 
-}
+	}
 
 
 
@@ -280,42 +280,42 @@ application.yml 파일 수정
 설치서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현
 # (ManagementCenter) InstallationService.java
 
-package ipTVShopProject.external;
+	package ipTVShopProject.external;
 
 
-@FeignClient(name="Installation", url="http://Installation:8080")
-public interface InstallationService {
+	@FeignClient(name="Installation", url="http://Installation:8080")
+	public interface InstallationService {
 
-    @RequestMapping(method= RequestMethod.PATCH, path="/installations")
-    public void installationCancellation(@RequestBody Installation installation);
+		@RequestMapping(method= RequestMethod.PATCH, path="/installations")
+		public void installationCancellation(@RequestBody Installation installation);
 
-}
+	}
 
 인터넷가입 취소 요청(cancelRequest)을 받은 후, 처리하는 부분
 # (Installation) InstallationController.java
 
-package ipTVShopProject;
+	package ipTVShopProject;
 
- @RestController
- public class InstallationController {
-  @Autowired
-  InstallationRepository installationRepository;
+	 @RestController
+	 public class InstallationController {
+	  @Autowired
+	  InstallationRepository installationRepository;
 
-  @RequestMapping(method=RequestMethod.GET, path="/installations")
-  public String installationCancellation(@RequestBody Installation installation) {
+	  @RequestMapping(method=RequestMethod.GET, path="/installations")
+	  public String installationCancellation(@RequestBody Installation installation) {
 
-   Installation installationCancel = installationRepository.findByOrderId(installation.getOrderId());
+	   Installation installationCancel = installationRepository.findByOrderId(installation.getOrderId());
 
-   if (installationCancel.getStatus().equals("INSTALLCOMPLETED")) { // 설치 완료상태일 때 거절
-       return "NotAccepted";
-   }
-   else {
-       installationCancel.setStatus("INSTALLATIONCANCELED");  // 설치 완료가 아닐 때 취소 허용
-       installationRepository.save(installationCancel);
-       return "Accepted";
-   }
-  }
-}
+	   if (installationCancel.getStatus().equals("INSTALLCOMPLETED")) { // 설치 완료상태일 때 거절
+		   return "NotAccepted";
+	   }
+	   else {
+		   installationCancel.setStatus("INSTALLATIONCANCELED");  // 설치 완료가 아닐 때 취소 허용
+		   installationRepository.save(installationCancel);
+		   return "Accepted";
+	   }
+	  }
+	}
 
 
 취소가능상태를 확인 하여 처리 후, (@PostUpdate) 자신의 설치 상태를 변경하도록 처리
