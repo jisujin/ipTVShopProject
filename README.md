@@ -78,10 +78,10 @@
 
 
 ## AS-IS 조직 (Horizontally-Aligned)
-  ![image](https://user-images.githubusercontent.com/56263370/87296744-32433480-c542-11ea-9683-6b792f12cf55.png)  
+![image](https://user-images.githubusercontent.com/56263370/87296744-32433480-c542-11ea-9683-6b792f12cf55.png)  
 
 ## TO-BE 조직 (Vertically-Aligned)
-  ![image](https://user-images.githubusercontent.com/56263370/87296805-4d15a900-c542-11ea-8fc2-15640ee62906.png)
+![image](https://user-images.githubusercontent.com/56263370/87296805-4d15a900-c542-11ea-8fc2-15640ee62906.png)
 
 
 ## Event Storming 결과
@@ -89,17 +89,17 @@
   - http://msaez.io/#/storming/tumGnckjgrc4UVXq2EBT4EFYhnT2/mine/c03f2bb6625a2ed5bef6fcf78dde4b26/-MC01LpwJ3zz9a4MgvCj
 
 ### 이벤트 도출
- ![image](https://user-images.githubusercontent.com/56263370/87294520-de831c00-c53e-11ea-9011-f8ef1bf80398.png)
+![image](https://user-images.githubusercontent.com/56263370/87294520-de831c00-c53e-11ea-9011-f8ef1bf80398.png)
 
 
 ### 부적격 이벤트 탈락
-  ![image](https://user-images.githubusercontent.com/56263370/87294672-08d4d980-c53f-11ea-9ee5-b572d8e5a6de.png)
+![image](https://user-images.githubusercontent.com/56263370/87294672-08d4d980-c53f-11ea-9ee5-b572d8e5a6de.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
         - 중복/불필요 이벤트 제거
 
 ### 폴리시 부착
-  ![image](https://user-images.githubusercontent.com/56263370/87294750-2609a800-c53f-11ea-841e-b373a52a2200.png)
+![image](https://user-images.githubusercontent.com/56263370/87294750-2609a800-c53f-11ea-841e-b373a52a2200.png)
 
 
 ### 액터, 커맨드 부착하여 읽기 좋게
@@ -109,13 +109,13 @@
 ### 어그리게잇으로 묶기
 ![image](https://user-images.githubusercontent.com/56263370/87294942-6f59f780-c53f-11ea-8c69-af3f105bfdc1.png)
 
-    - app의 
+    -가입신청, 서비스관리센터, 설치 부분을 정의함
 
 ### 바운디드 컨텍스트로 묶기
 ![image](https://user-images.githubusercontent.com/56263370/87295108-acbe8500-c53f-11ea-897d-553412df4123.png)
 
 
-    - 도메인 서열 분리 
+    - 도메인 서열 분리 : 가입신청 -> 서비스관리센터 -> 설치 순으로 정의
         
 
 
