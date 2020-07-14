@@ -149,7 +149,7 @@
 
 
 ## 헥사고날 아키텍처 다이어그램 도출
-    ![image](https://user-images.githubusercontent.com/56263370/87295821-bdbbc600-c540-11ea-955f-e4835fe69de4.png)
+![image](https://user-images.githubusercontent.com/56263370/87295821-bdbbc600-c540-11ea-955f-e4835fe69de4.png)
 
 
 # 구현:
@@ -158,7 +158,7 @@
 
 ## DDD 의 적용
 
-- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 pay 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어 (유비쿼터스 랭귀지)를 그대로 사용하려고 노력했다. 하지만, 일부 구현에 있어서 영문이 아닌 경우는 실행이 불가능한 경우가 있기 때문에 계속 사용할 방법은 아닌것 같다. (Maven pom.xml, Kafka의 topic id, FeignClient 의 서비스 id 등은 한글로 식별자를 사용하는 경우 오류가 발생하는 것을 확인하였다)
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: Order, ManagementCenter, Installation
 
 
 
@@ -169,8 +169,8 @@
 
 
 ## 폴리글랏 프로그래밍
-
-
+- Spring-Boot, JPA, My-SQL 적용(개발 테스트에서는 H2 DB사용)
+- Java 외 다른 프로그램언어는 적용하지 않았음.
 
 
 ## 동기식 호출 과 Fallback 처리
@@ -187,8 +187,12 @@
 ## CI/CD 설정
 
 
-각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 GCP를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 cloudbuild.yml 에 포함되었다.
-
+각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 cloudbuild.yml 에 포함되었다.
+- https://github.com/ChaSang-geol/ipTVShopProject_gateway
+- https://github.com/ChaSang-geol/ipTVShopProject_Order
+- https://github.com/ChaSang-geol/ipTVShopProject_ManagementCenter
+- https://github.com/ChaSang-geol/ipTVShopProject_Installation
+- https://github.com/ChaSang-geol/ipTVShopProject_orderstatus
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
@@ -206,7 +210,7 @@ hystrix:
 
 ```
 
-- 피호출 서비스(결제:pay) 의 임의 부하 처리 - 400 밀리에서 증감 220 밀리 정도 왔다갔다 하게
+- 피호출 서비스(설치 진행상태 확인:installation) 의 임의 부하 처리 - 400 밀리에서 증감 220 밀리 정도 왔다갔다 하게
 
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
@@ -236,21 +240,5 @@ kubectl set image ...
 
 
 
-# 신규 개발 조직의 추가
-
-  
-
-
-
-## 이벤트 스토밍 
-
-
-## 헥사고날 아키텍처 변화 
-
-## 구현  
-
-
-
-## 운영과 Retirement
 
 
