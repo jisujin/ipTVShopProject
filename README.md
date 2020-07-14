@@ -109,13 +109,13 @@
 ### 어그리게잇으로 묶기
 ![image](https://user-images.githubusercontent.com/56263370/87294942-6f59f780-c53f-11ea-8c69-af3f105bfdc1.png)
 
-    - app의 
+    -가입신청, 서비스관리센터, 설치 부분을 정의함
 
 ### 바운디드 컨텍스트로 묶기
 ![image](https://user-images.githubusercontent.com/56263370/87295108-acbe8500-c53f-11ea-897d-553412df4123.png)
 
 
-    - 도메인 서열 분리 
+    - 도메인 서열 분리 : 가입신청 -> 서비스관리센터 -> 설치 순으로 정의
         
 
 
