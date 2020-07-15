@@ -345,10 +345,10 @@ pom.xml dependency 추가
 application.yml 파일 수정
 ```
 	datasource:
+		url: ${url}
+		username: ${username}
+		password: ${password}
 		driver-class-name: com.mysql.cj.jdbc.Driver
-		url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
-		username: root
-		password: 
 ```
 
 buildspec.yml 파일 수정
