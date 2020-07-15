@@ -1,4 +1,4 @@
-- IAM > »ç¿ëÀÚ > º¸¾ÈÀÚ°İÁõ¸í > ¾×¼¼½º Å° ¸¸µé±â
+- IAM > ì‚¬ìš©ì > ë³´ì•ˆìê²©ì¦ëª… > ì•¡ì„¸ìŠ¤ í‚¤ ë§Œë“¤ê¸°
 - region : us-east-2
 
 aws eks --region us-east-2 update-kubeconfig --name awsteamd-cluster
@@ -7,13 +7,13 @@ kubectl -n kafka exec -ti my-kafka-1 -- /usr/bin/kafka-console-consumer --bootst
 
 kubectl exec -it httpie bin/bash
 
-[ HPA ¿ÀÅä½ºÄÉÀÏ¸µ ]
+[ HPA ì˜¤í† ìŠ¤ì¼€ì¼ë§ ]
 kubectl autoscale deploy order --min=1 --max=10 --cpu-percent=1
 kubectl get deploy order -w
 kubectl get hpa -w
 kubectl delete hpa order 
 
-[ MSA Å×½ºÆ® ]
+[ MSA í…ŒìŠ¤íŠ¸ ]
 http http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders productId="1001" productName="internet" installationAddress="Seoul" customerId="1" orderDate="20200715" status="JOINORDED"
 
 http http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders productId="1002" productName="TV" installationAddress="Busan" customerId="2" orderDate="20200715" status="JOINORDED"
@@ -25,12 +25,12 @@ http PATCH http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazon
 
 http PATCH http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders/cancel?orderId=1
 
-[ siege ºÎÇÏ ¹ß»ı ]
+[ siege ë¶€í•˜ ë°œìƒ ]
 siege -c2 -t10S -v --content-type "application/json" 'http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders POST {"productId": "2001", "productName": "internet", "installationAddress": "Seoul", "customerId": "1", "orderDate": "20200715", "status": "JOINORDED"}'
 
-siege -c50 -t150S --content-type "application/json" 'http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders POST {"productId": "2001", "productName": "internet", "installationAddress": "Seoul", "customerId": "1", "orderDate": "20200715", "status": "JOINORDED"}'
+siege -c30 -t150S --content-type "application/json" 'http://a518c6481215d478b8b769aa034cdff4-46291629.us-east-2.elb.amazonaws.com:8080/orders POST {"productId": "2001", "productName": "internet", "installationAddress": "Seoul", "customerId": "1", "orderDate": "20200715", "status": "JOINORDED"}'
 
-[ ¹«Á¤Áö Àç¹èÆ÷ ]
+[ ë¬´ì •ì§€ ì¬ë°°í¬ ]
 ---------------
                     ports:
                       - containerPort: 8080
@@ -53,15 +53,15 @@ siege -c50 -t150S --content-type "application/json" 'http://a518c6481215d478b8b7
 
 
 [ Kafka ]
-- ÅäÇÈ »ı¼º
+- í† í”½ ìƒì„±
 kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --zookeeper my-kafka-zookeeper:2181 --topic ipTVShopProject --create --partitions 1 --replication-factor 1
-- ÅäÇÈ Á¶È¸
+- í† í”½ ì¡°íšŒ
 kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --zookeeper my-kafka-zookeeper:2181 --list
-- ÅäÇÈ »èÁ¦
+- í† í”½ ì‚­ì œ
 kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --delete --zookeeper my-kafka-zookeeper:2181 --topic ipTVShopProject
-- ÀÌº¥Æ® ¹ßÇà
+- ì´ë²¤íŠ¸ ë°œí–‰
 kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-producer --broker-list my-kafka:9092 --topic ipTVShopProject
-- ÀÌº¥Æ® ¼ö½Å
+- ì´ë²¤íŠ¸ ìˆ˜ì‹ 
 kubectl -n kafka exec -ti my-kafka-0 -- /usr/bin/kafka-console-consumer --bootstrap-server my-kafka:9092 --topic ipTVShopProject --from-beginning
 kubectl -n kafka exec -ti my-kafka-1 -- /usr/bin/kafka-console-consumer --bootstrap-server my-kafka:9092 --topic ipTVShopProject
 
