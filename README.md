@@ -230,6 +230,7 @@ Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더�
 # 구현:
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8084 이다)
 
+```
 - Local
 	cd Order
 	mvn spring-boot:run
@@ -244,12 +245,14 @@ Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더�
 	mvn spring-boot:run
 
 - EKS : CI/CD 통해 빌드/배포 ("운영 > CI-CD 설정" 부분 참조)
+```
 
 ## DDD 의 적용
 
 - 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: Order, ManagementCenter, Installation
 - Installation(설치) 마이크로서비스 예시
 
+```
 	package ipTVShopProject;
 
 	import javax.persistence.*;
@@ -321,29 +324,30 @@ Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더�
 		}
 
 	}
-
+```
 
 
 
 
 ## 폴리글랏 퍼시스턴스
 orderstatus 서비스는 My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용 (다른 서비스는 H2 적용)
-
+```
 	pom.xml dependency 추가
 	<dependency>
 		<groupId>mysql</groupId>
 		<artifactId>mysql-connector-java</artifactId>
 		<scope>runtime</scope>
 	</dependency>
+```
 
 application.yml 파일 수정
-
+```
 	datasource:
 		driver-class-name: com.mysql.cj.jdbc.Driver
 		url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
 		username: root
 		password: 
-
+```
 
 
 ## 동기식 호출 과 Fallback 처리
@@ -352,6 +356,7 @@ application.yml 파일 수정
 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어 있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다.
 
 설치 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현
+```
 # (ManagementCenter) InstallationService.java
 
 	package ipTVShopProject.external;
@@ -364,8 +369,10 @@ application.yml 파일 수정
 		public void installationCancellation(@RequestBody Installation installation);
 
 	}
+```
 
 인터넷가입 취소 요청(cancelRequest)을 받은 후, 처리하는 부분
+```
 # (Installation) InstallationController.java
 
 	package ipTVShopProject;
@@ -384,14 +391,14 @@ application.yml 파일 수정
 
 	    }
 	}
-
+```
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
 가입 신청이 이루어진 후에 서비스 관리센터 서비스로 이를 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 서비스 관리센터 서비스의 처리를 위하여 가입신청이 블로킹 되지 않도록 처리한다.
  
 - 이를 위하여 가입 신청에 기록을 남긴 후에 곧바로 가입 신청이 되었다는 도메인 이벤트를 카프카로 송출한다.(Publish)
-
+```
 # (order) order.java
 
     @PostPersist
@@ -403,9 +410,9 @@ application.yml 파일 수정
             joinOrdered.publishAfterCommit();
         }
     }
-
+```
 - 서비스 관리센터 서비스에서는 가입신청 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다.
-
+```
 # (ManagementCenter) PolicyHandler.java
 
 @Service
@@ -430,7 +437,7 @@ public class PolicyHandler{
         }
     }
 }
-
+```
 가입신청은 서비스 관리센터와 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 서비스 관리센터 서비스가 유지보수로 인해 잠시 내려간 상태라도 가입신청을 받는데 문제가 없다.
 
 
