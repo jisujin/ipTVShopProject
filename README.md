@@ -743,4 +743,12 @@ CloudWatch Logs 수집, 아카이브 스토리지 및 데이터 스캔 요금이
 ![image](https://user-images.githubusercontent.com/64656963/86348145-3a75b700-bc9a-11ea-8477-e7e7178c51fe.png)
 
 
-
+# 시연
+ 1. 인터넷 가입신청 -> installation 접수 완료 상태
+ 2. 설치 기사 설치 완료 처리 -> 가입 신청 완료 상태
+ 3. 가입 취소
+ 4. EDA 구현
+   - ManagementCenter 장애 상황에서 order(가입 신청) 정상 처리
+   - ManagementCenter 정상 전환 시 수신 받지 못한 이벤트 처리
+ 5. 무정지 재배포
+ 6. 오토 스케일링
