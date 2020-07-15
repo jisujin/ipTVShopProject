@@ -183,7 +183,7 @@
 - 신규 개발 조직 추가 시, 기존의 마이크로 서비스에 수정이 발생하지 않도록 Inbund 요청을 REST 가 아닌 Event를 Subscribe 하는 방식으로 구현하였다.
 - 기존 마이크로 서비스에 대하여 아키텍처, 데이터베이스 구조와 관계 없이 추가할 수 있다.
 
-이미지 추가 ====================
+![image](https://user-images.githubusercontent.com/56263370/87504063-b7dcf680-c6a0-11ea-880f-629bbabecf57.png)
 
 ### 운영과 Retirement
 
