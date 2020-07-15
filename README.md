@@ -350,6 +350,25 @@ application.yml 파일 수정
 		password: 
 ```
 
+buildspec.yml 파일 수정
+```
+    env:
+      - name: url
+	valueFrom:
+	  configMapKeyRef:
+	    name: iptv
+	    key: urlstatus 
+      - name: username
+	valueFrom:
+	  secretKeyRef:
+	    name: iptv
+	    key: username          
+      - name: password
+	valueFrom:
+	  secretKeyRef:
+	    name: iptv
+	    key: password    
+```
 
 ## 동기식 호출 과 Fallback 처리
 
