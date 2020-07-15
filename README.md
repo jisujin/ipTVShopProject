@@ -148,7 +148,7 @@
 
 
     - 도메인 서열 분리 : 가입신청 -> 서비스관리센터 -> 설치 순으로 정의
-        
+       
 
 
 ### 폴리시의 이동과 컨텍스트 매핑 (파란색점선은 Pub/Sub, 빨간색실선은 Req/Resp)
@@ -181,6 +181,7 @@
 # 구현:
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8084 이다)
 
+- Local
 	cd Order
 	mvn spring-boot:run
 
@@ -193,6 +194,7 @@
 	cd orderstatus
 	mvn spring-boot:run
 
+- EKS : CI/CD 통해 빌드/배포 ("운영 > CI-CD 설정" 부분 참조)
 
 ## DDD 의 적용
 
@@ -381,6 +383,73 @@ public class PolicyHandler{
 }
 
 가입신청은 서비스 관리센터와 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 서비스 관리센터 서비스가 유지보수로 인해 잠시 내려간 상태라도 가입신청을 받는데 문제가 없다.
+
+
+## API Gateway
+
+API Gateway를 통하여, 마이크로 서비스들의 진입점을 통일한다.
+
+```
+# application.yml 파일에 라우팅 경로 설정
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: Order
+          uri: http://Order:8080
+          predicates:
+            - Path=/orders/** 
+        - id: ManagementCenter
+          uri: http://ManagementCenter:8080
+          predicates:
+            - Path=/managementCenters/** 
+        - id: Installation
+          uri: http://Installation:8080
+          predicates:
+            - Path=/installations/** 
+        - id: orderstatus
+          uri: http://orderstatus:8080
+          predicates:
+            - Path=/orderStatuses/** 
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
+```
+
+- EKS에 배포 시, MSA는 Service type을 ClusterIP(default)로 설정하여, 클러스터 내부에서만 호출 가능하도록 한다.
+- API Gateway는 Service type을 LoadBalancer로 설정하여 외부 호출에 대한 라우팅을 처리한다.
+
+```
+# buildspec.yml 설정
+
+  cat <<EOF | kubectl apply -f -
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: $_PROJECT_NAME
+    labels:
+      app: $_PROJECT_NAME
+    spec:
+    ports:
+      - port: 8080
+        targetPort: 8080
+    selector:
+      app: $_PROJECT_NAME
+    type: LoadBalancer
+  EOF
+```
 
 
 # 운영
