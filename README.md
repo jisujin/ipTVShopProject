@@ -341,6 +341,50 @@ application.yml 파일 수정
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
 
+가입 신청이 이루어진 후에 서비스 관리센터 서비스로 이를 알려주는 행위는 동기식이 아니라 비 동기식으로 처리하여 서비스 관리센터 서비스의 처리를 위하여 가입신청이 블로킹 되지 않도록 처리한다.
+ 
+- 이를 위하여 가입 신청에 기록을 남긴 후에 곧바로 가입 신청이 되었다는 도메인 이벤트를 카프카로 송출한다.(Publish)
+
+# (order) order.java
+
+    @PostPersist
+    public void onPostPersist(){
+
+        if(this.getStatus().equals("JOINORDED")){
+            JoinOrdered joinOrdered = new JoinOrdered();
+            BeanUtils.copyProperties(this, joinOrdered);
+            joinOrdered.publishAfterCommit();
+        }
+    }
+
+- 서비스 관리센터 서비스에서는 가입신청 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다.
+
+# (ManagementCenter) PolicyHandler.java
+
+@Service
+public class PolicyHandler{
+    @Autowired
+    ManagementCenterRepository managementCenterRepository;
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverJoinOrdered_OrderRequest(@Payload JoinOrdered joinOrdered){
+
+        if(joinOrdered.isMe()){
+            ManagementCenter oa = new ManagementCenter();
+
+            oa.setOrderId(joinOrdered.getId());
+            oa.setInstallationAddress(joinOrdered.getInstallationAddress());
+            oa.setId(joinOrdered.getId());
+            oa.setStatus("JOINORDED");
+            oa.setEngineerName("Engineer" + joinOrdered.getId());
+            oa.setEngineerId(joinOrdered.getId() + 100);
+
+            managementCenterRepository.save(oa);
+        }
+    }
+}
+
+가입신청은 서비스 관리센터와 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 서비스 관리센터 서비스가 유지보수로 인해 잠시 내려간 상태라도 가입신청을 받는데 문제가 없다.
 
 
 # 운영
@@ -358,31 +402,51 @@ application.yml 파일 수정
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
-* 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+* 서킷 브레이킹 프레임워크의 선택
+  - Spring FeignClient + Hystrix 옵션을 사용하여 구현할 경우, 도메인 로직과 부가 기능 로직이 서비스에 같이 구현된다.
+  - istio를 사용해서 서킷 브레이킹 적용이 가능하다.
 
-
-```
-# application.yml
-
-hystrix:
-  command:
-    # 전역설정
-    default:
-      execution.isolation.thread.timeoutInMilliseconds: 610
+- 서비스를 istio로 배포(동기 호출하는 Request/Response 2개 서비스)
 
 ```
+kubectl get deploy managementcenter -o yaml > managementcenter_deploy.yaml 
+kubectl apply -f <(istioctl kube-inject -f managementcenter_deploy.yaml) 
 
-- 피호출 서비스(설치 진행상태 확인:installation) 의 임의 부하 처리 - 400 밀리에서 증감 220 밀리 정도 왔다갔다 하게
+kubectl get deploy installation -o yaml > installation_deploy.yaml 
+kubectl apply -f <(istioctl kube-inject -f installation_deploy.yaml) 
 
+```
+
+- istio 에서 서킷브레이커 설정(DestinationRule)
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: installation
+spec:
+  host: installation
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 1           # 목적지로 가는 HTTP, TCP connection 최대 값. (Default 1024)
+      http:
+        http1MaxPendingRequests: 1  # 연결을 기다리는 request 수를 1개로 제한 (Default 
+        maxRequestsPerConnection: 1 # keep alive 기능 disable
+        maxRetries: 3               # 기다리는 동안 최대 재시도 수(Default 1024)
+    outlierDetection:
+      consecutiveErrors: 5          # 5xx 에러가 5번 발생하면
+      interval: 1s                  # 1초마다 스캔 하여
+      baseEjectionTime: 30s         # 30 초 동안 circuit breaking 처리   
+      maxEjectionPercent: 100       # 100% 로 차단
+EOF
+
+```
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 100명
 - 60초 동안 실시
 
-- 운영시스템은 죽지 않고 지속적으로 CB 에 의하여 적절히 회로가 열림과 닫힘이 벌어지면서 자원을 보호하고 있음을 보여줌. 하지만, 63.55% 가 성공하였고, 46%가 실패했다는 것은 고객 사용성에 있어 좋지 않기 때문에 Retry 설정과 동적 Scale out (replica의 자동적 추가,HPA) 을 통하여 시스템을 확장 해주는 후속처리가 필요.
-
-- Retry 의 설정 (istio)
-- Availability 가 높아진 것을 확인 (siege)
 
 ### 오토스케일 아웃
 
