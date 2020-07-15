@@ -373,8 +373,9 @@ buildspec.yml 파일 수정
 
 ## 동기식 호출 과 Fallback 처리
 
-분석 단계에서의 조건 중 하나로 ManagementCenter에서 인터넷 가입신청 취소를 요청 받으면, 설치 취소 처리하는 부분을 동기식 호출하는 트랜잭션으로 처리하기로 하였다. 
-호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어 있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다.
+- 분석 단계에서의 조건 중 하나로 서비스 관리센터(ManagementCenter)에서 인터넷 가입신청 취소를 요청 받으면, 
+설치(installation) 서비스 취소 처리하는 부분을 동기식 호출하는 트랜잭션으로 처리하기로 하였다. 
+- 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어 있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다.
 
 설치 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현
 ```
@@ -392,7 +393,7 @@ buildspec.yml 파일 수정
 	}
 ```
 
-인터넷가입 취소 요청(cancelRequest)을 받은 후, 처리하는 부분
+인터넷 가입 취소 요청(cancelRequest)을 받은 후, 처리하는 부분
 ```
 # (Installation) InstallationController.java
 
