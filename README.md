@@ -178,6 +178,55 @@
 ![image](https://user-images.githubusercontent.com/56263370/87491731-e0a2c300-c683-11ea-9c78-ac7beda99da4.png)
 
 
+## 신규 서비스 추가 시 기존 서비스에 영향이 없도록 열린 아키택처 설계
+
+- 신규 개발 조직 추가 시, 기존의 마이크로 서비스에 수정이 발생하지 않도록 Inbund 요청을 REST 가 아닌 Event를 Subscribe 하는 방식으로 구현하였다.
+- 기존 마이크로 서비스에 대하여 아키텍처, 데이터베이스 구조와 관계 없이 추가할 수 있다.
+
+이미지 추가 ====================
+
+### 운영과 Retirement
+
+Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더이상 불필요해져도 Deployment 에서 제거되면 기존 마이크로 서비스에 어떤 영향도 주지 않는다.
+
+* [비교] 설치 (installation) 마이크로서비스의 경우 API 변화나 Retire 시에 서비스 관리센터(ManagementCenter) 마이크로 서비스의 변경을 초래한다.
+
+예) API 변화시
+```
+# ManagementCenter.java (Entity)
+
+    @PostUpdate
+    public void onPostUpdate() {
+            ipTVShopProject.external.Installation installation = new ipTVShopProject.external.Installation();
+
+            installation.setOrderId(this.getOrderId());
+            ManagementCenterApplication.applicationContext.getBean(ipTVShopProject.external.InstallationService.class)
+                    .installationCancellation(installation);
+
+	-------->
+	
+            ManagementCenterApplication.applicationContext.getBean(ipTVShopProject.external.InstallationService.class)
+                    .installationCancellation2222222(installation);
+    }	    
+```
+
+예) Retire 시
+```
+# ManagementCenter.java (Entity)
+
+    @PostUpdate
+    public void onPostUpdate(){
+    /**
+            ipTVShopProject.external.Installation installation = new ipTVShopProject.external.Installation();
+
+            installation.setOrderId(this.getOrderId());
+            ManagementCenterApplication.applicationContext.getBean(ipTVShopProject.external.InstallationService.class)
+                    .installationCancellation(installation);
+
+    **/
+    } 
+```
+
 # 구현:
 분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 8084 이다)
 
