@@ -331,8 +331,9 @@ Request/Response 방식으로 구현하지 않았기 때문에 서비스가 더�
 
 ## 폴리글랏 퍼시스턴스
 orderstatus 서비스는 My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용 (다른 서비스는 H2 적용)
+
+pom.xml dependency 추가
 ```
-	pom.xml dependency 추가
 	<dependency>
 		<groupId>mysql</groupId>
 		<artifactId>mysql-connector-java</artifactId>
