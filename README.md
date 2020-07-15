@@ -488,6 +488,41 @@ siege -c30 -t150S --content-type "application/json" 'http://a518c6481215d478b8b7
 ![image](https://user-images.githubusercontent.com/56263370/87494675-97a23d00-c68a-11ea-9ad2-a8859861ce9d.png)
 
 
+## ConfigMap 적용
+
+- 설정의 외부 주입을 통한 유연성을 제공하기 위해 ConfigMap을 적용한다.
+- orderstatus 에서 사용하는 mySQL(AWS RDS 활용) 접속 정보를 ConfigMap을 통해 주입 받는다.
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iptv
+data:
+  urlstatus: "jdbc:mysql://iptv.cgzkudckye4b.us-east-2.rds.amazonaws.com:3306/orderstatus?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8"
+EOF
+```
+
+## Secret 적용
+
+- username, password와 같은 민감한 정보는 ConfigMap이 아닌 Secret을 적용한다.
+- etcd에 암호화 되어 저장되어, ConfigMap 보다 안전하다.
+- value는 base64 인코딩 된 값으로 지정한다. (echo root | base64)
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: iptv
+type: Opaque
+data:
+  username: xxxxx <- 보안 상, 임의의 값으로 표시함 
+  password: xxxxx <- 보안 상, 임의의 값으로 표시함
+EOF
+```
+
 
 
 
