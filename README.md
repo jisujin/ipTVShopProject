@@ -89,67 +89,61 @@
   - http://msaez.io/#/storming/tumGnckjgrc4UVXq2EBT4EFYhnT2/mine/c03f2bb6625a2ed5bef6fcf78dde4b26/-MC01LpwJ3zz9a4MgvCj
 
 ### 이벤트 도출
-![image](https://user-images.githubusercontent.com/56263370/87294520-de831c00-c53e-11ea-9011-f8ef1bf80398.png)
+![image](https://user-images.githubusercontent.com/56263370/87490118-ce268a80-c67f-11ea-9e0f-28725998ecf4.png)
 
 
 ### 부적격 이벤트 탈락
-![image](https://user-images.githubusercontent.com/56263370/87294672-08d4d980-c53f-11ea-9ee5-b572d8e5a6de.png)
+![image](https://user-images.githubusercontent.com/56263370/87490154-edbdb300-c67f-11ea-9923-d08c29203bc7.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
-        - 중복/불필요 이벤트 제거
+        - 중복/불필요, 처리 프로세스에 해당하는 이벤트 제거
 
 ### 폴리시 부착
-![image](https://user-images.githubusercontent.com/56263370/87294750-2609a800-c53f-11ea-841e-b373a52a2200.png)
+![image](https://user-images.githubusercontent.com/56263370/87490165-f8784800-c67f-11ea-919b-edee122caf1f.png)
 
 
 ### 액터, 커맨드 부착하여 읽기 좋게
-![image](https://user-images.githubusercontent.com/56263370/87294847-49ccee00-c53f-11ea-8b39-0f9af2ed9a8f.png)
+![image](https://user-images.githubusercontent.com/56263370/87490182-04fca080-c680-11ea-87e3-829b12b1df15.png)
 
 
 ### 어그리게잇으로 묶기
-![image](https://user-images.githubusercontent.com/56263370/87294942-6f59f780-c53f-11ea-8c69-af3f105bfdc1.png)
+![image](https://user-images.githubusercontent.com/56263370/87490218-19409d80-c680-11ea-83de-464d8c9e1d47.png)
 
     -가입신청, 서비스관리센터, 설치 부분을 정의함
 
 ### 바운디드 컨텍스트로 묶기
-![image](https://user-images.githubusercontent.com/56263370/87295108-acbe8500-c53f-11ea-897d-553412df4123.png)
+![image](https://user-images.githubusercontent.com/56263370/87490225-2198d880-c680-11ea-9aaa-1210b8455719.png)
 
 
     - 도메인 서열 분리 : 가입신청 -> 서비스관리센터 -> 설치 순으로 정의
         
 
 
-### 폴리시의 이동과 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
-![image](https://user-images.githubusercontent.com/56263370/87295156-bf38be80-c53f-11ea-85c5-378d2b12d81d.png)
+### 폴리시의 이동과 컨텍스트 매핑 (파란색점선은 Pub/Sub, 빨간색실선은 Req/Resp)
+![image](https://user-images.githubusercontent.com/56263370/87490238-2e1d3100-c680-11ea-8d63-9b9626cf0fd4.png)
 
 
 ### 완성된 1차 모형
-![image](https://user-images.githubusercontent.com/56263370/87294427-c0b5b700-c53e-11ea-932c-546d7244fbef.png)
+![image](https://user-images.githubusercontent.com/56263370/87490104-bfd86e80-c67f-11ea-95d9-8d6d41dd1eea.png)
 
 
     - View Model 추가
+![image](https://user-images.githubusercontent.com/56263370/87490657-2ca03880-c681-11ea-9a88-0161e94cdf71.png)	
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 #### 시나리오 Coverage Check (1)
-![image](https://user-images.githubusercontent.com/56263370/87295479-366e5280-c540-11ea-8c27-ec483a384b69.png)
+![image](https://user-images.githubusercontent.com/56263370/87491137-4a21d200-c682-11ea-9e3e-66540f9c0af8.png)
 
 #### 시나리오 Coverage Check (2)
-![image](https://user-images.githubusercontent.com/56263370/87295543-5867d500-c540-11ea-9660-87e1c97591a2.png)
+![image](https://user-images.githubusercontent.com/56263370/87491151-59088480-c682-11ea-86a6-53df001934d1.png)
 
 #### 비기능 요구사항 coverage
-![image](https://user-images.githubusercontent.com/56263370/87295723-95cc6280-c540-11ea-8389-34c538f57e28.png)
-
-
-
-
-### 모델 수정
-
-(최종모델)
+![image](https://user-images.githubusercontent.com/56263370/87491175-66be0a00-c682-11ea-865f-9ee9e6113ed8.png)
 
 
 
 ## 헥사고날 아키텍처 다이어그램 도출
-![image](https://user-images.githubusercontent.com/56263370/87295821-bdbbc600-c540-11ea-955f-e4835fe69de4.png)
+![image](https://user-images.githubusercontent.com/56263370/87491116-3d9d7980-c682-11ea-83b3-c9501c7875ba.png)
 
 
 # 구현:
