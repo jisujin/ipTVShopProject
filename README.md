@@ -601,9 +601,9 @@ EOF
 
 ### 오토스케일 아웃
 
-- 가입신청 서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 10프로를 넘어서면 replica 를 10개까지 늘려준다.
+- 가입신청 서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 1프로를 넘어서면 replica 를 10개까지 늘려준다.
 ```
-kubectl autoscale deploy order --min=1 --max=10 --cpu-percent=10
+kubectl autoscale deploy order --min=1 --max=10 --cpu-percent=1
 ```
 
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어준다.
