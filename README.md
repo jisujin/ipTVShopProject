@@ -276,7 +276,7 @@
 
 
 ## 폴리글랏 퍼시스턴스
-My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용
+orderstatus 서비스는 My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용 (다른 서비스는 H2 적용)
 
 	pom.xml dependency 추가
 	<dependency>
@@ -288,22 +288,23 @@ My-SQL DB를 적용을 위해 다음 사항을 수정하여 적용
 application.yml 파일 수정
 
 	datasource:
-	driver-class-name: com.mysql.cj.jdbc.Driver
-	url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
-	username: root
-	password: 
+		driver-class-name: com.mysql.cj.jdbc.Driver
+		url: jdbc:mysql://localhost:3306/example?serverTimezone=UTC&characterEncoding=UTF-8
+		username: root
+		password: 
 
 
 ## 폴리글랏 프로그래밍
 - Spring-Boot, JPA, My-SQL 적용(개발 테스트에서는 H2 DB사용)
-- Java 외 다른 프로그램언어는 적용하지 않았음.
+- Java 외 다른 프로그램 언어는 적용하지 않았음.
 
 
 ## 동기식 호출 과 Fallback 처리
 
-분석단계에서의 조건 중 하나로 ManagementCenter에서 인터넷가입신청 취소를 요청 받으면, 설치진행상태를 확인하여 취소/취소불가 처리하는 부분을 동기식 호출하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다.
+분석 단계에서의 조건 중 하나로 ManagementCenter에서 인터넷 가입신청 취소를 요청 받으면, 설치 취소 처리하는 부분을 동기식 호출하는 트랜잭션으로 처리하기로 하였다. 
+호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어 있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다.
 
-설치서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현
+설치 서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현
 # (ManagementCenter) InstallationService.java
 
 	package ipTVShopProject.external;
@@ -322,48 +323,20 @@ application.yml 파일 수정
 
 	package ipTVShopProject;
 
-	 @RestController
-	 public class InstallationController {
-	  @Autowired
-	  InstallationRepository installationRepository;
+	@RestController
+	public class InstallationController {
+	    @Autowired
+	    InstallationRepository installationRepository;
 
-	  @RequestMapping(method=RequestMethod.GET, path="/installations")
-	  public String installationCancellation(@RequestBody Installation installation) {
+	    @RequestMapping(method=RequestMethod.POST, path="/installations")
+	    public void installationCancellation(@RequestBody Installation installation) {
 
-	   Installation installationCancel = installationRepository.findByOrderId(installation.getOrderId());
+		Installation installationCancel = installationRepository.findByOrderId(installation.getOrderId());
+		installationCancel.setStatus("INSTALLATIONCANCELED");
+		installationRepository.save(installationCancel);
 
-	   if (installationCancel.getStatus().equals("INSTALLCOMPLETED")) { // 설치 완료상태일 때 거절
-		   return "NotAccepted";
-	   }
-	   else {
-		   installationCancel.setStatus("INSTALLATIONCANCELED");  // 설치 완료가 아닐 때 취소 허용
-		   installationRepository.save(installationCancel);
-		   return "Accepted";
-	   }
-	  }
+	    }
 	}
-
-
-취소가능상태를 확인 하여 처리 후, (@PostUpdate) 자신의 설치 상태를 변경하도록 처리
-# Installation.java (Entity)
-
-    @PostUpdate
-    public void onPostUpdate(){
-        if(this.getStatus().equals("INSTALLCOMPLETED")) {
-            InstallationCompleted installationCompleted = new InstallationCompleted();
-            BeanUtils.copyProperties(this, installationCompleted);
-            installationCompleted.publishAfterCommit();
-        }
-
-        if(this.getStatus().equals("INSTALLATIONCANCELED")) {
-            InstallationCanceled installationCanceled = new InstallationCanceled();
-            BeanUtils.copyProperties(this, installationCanceled);
-            installationCanceled.publishAfterCommit();
-        }
-
-
-    }
-
 
 
 ## 비동기식 호출 / 시간적 디커플링 / 장애격리 / 최종 (Eventual) 일관성 테스트
@@ -375,7 +348,8 @@ application.yml 파일 수정
 ## CI/CD 설정
 
 
-각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 cloudbuild.yml 에 포함되었다.
+각 구현체들은 각자의 source repository 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS CodeBuild를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 buildspec.yml 에 포함되었다.
+아래 Github 소스 코드 변경 시, CodeBuild 빌드/배포가 자동 시작되도록 구성하였다.
 - https://github.com/ChaSang-geol/ipTVShopProject_gateway
 - https://github.com/ChaSang-geol/ipTVShopProject_Order
 - https://github.com/ChaSang-geol/ipTVShopProject_ManagementCenter
