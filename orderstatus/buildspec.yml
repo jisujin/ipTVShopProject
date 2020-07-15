@@ -76,6 +76,22 @@ phases:
                     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
                     ports:
                       - containerPort: 8080
+                    env:
+                      - name: url
+                        valueFrom:
+                          configMapKeyRef:
+                            name: iptv
+                            key: urlstatus 
+                      - name: username
+                        valueFrom:
+                          secretKeyRef:
+                            name: iptv
+                            key: username          
+                      - name: password
+                        valueFrom:
+                          secretKeyRef:
+                            name: iptv
+                            key: password                           
                     readinessProbe:
                       httpGet:
                         path: /actuator/health

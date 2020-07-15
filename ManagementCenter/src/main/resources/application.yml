@@ -24,7 +24,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: orderstatus
+          group: ManagementCenter
           destination: ipTVShopProject
           contentType: application/json
         event-out:
@@ -35,24 +35,13 @@ logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
+    root: info
 server:
-  port: 8084
+  port: 8082
 ---
 
 spring:
   profiles: docker
-  jpa:
-    hibernate:
-      ddl-auto: update
-    generate-ddl: false
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  datasource:
-    url: ${url}
-    username: ${username}
-    password: ${password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: 4  
   cloud:
     stream:
       kafka:
@@ -68,7 +57,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: orderstatus
+          group: ManagementCenter
           destination: ipTVShopProject
           contentType: application/json
         event-out:
