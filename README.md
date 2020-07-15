@@ -385,6 +385,16 @@ public class PolicyHandler{
 가입신청은 서비스 관리센터와 완전히 분리되어 있으며, 이벤트 수신에 따라 처리되기 때문에, 서비스 관리센터 서비스가 유지보수로 인해 잠시 내려간 상태라도 가입신청을 받는데 문제가 없다.
 
 
+## CQRS
+
+가입신청 상태 조회를 위한 서비스를 CQRS 패턴으로 구현하였다.
+- order, ManagementCenter, Installation 개별 aggregate 통합 조회로 인한 성능 저하를 막을 수 있다.
+- 모든 정보는 비동기 방식으로 발행된 이벤트를 수신하여 처리된다.
+- 별도의 서비스(orderStatus), 저장소(AWS RDS-mySQL)로 구현하였다.
+- 설계 : MSAEz 설계의 view 매핑 설정 참조
+
+
+
 ## API Gateway
 
 API Gateway를 통하여, 마이크로 서비스들의 진입점을 통일한다.
